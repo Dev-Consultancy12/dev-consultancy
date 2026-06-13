@@ -142,3 +142,97 @@
     @apply font-medium tracking-tight;
   }
 }
+
+/* ───────── Dev Consultancy enhancements ───────── */
+@layer utilities {
+  @keyframes dot-drift {
+    from { background-position: 0 0, 0 0; }
+    to   { background-position: 0 -64px, -64px 0; }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  @keyframes audit-pulse {
+    0%, 100% { box-shadow: 0 0 0 rgba(200,255,0,0.4); }
+    50%      { box-shadow: 0 0 16px rgba(200,255,0,0.4); }
+  }
+  @keyframes dot-pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.3); }
+  }
+  @keyframes float-up {
+    0%   { transform: translateY(20px); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { transform: translateY(-120px); opacity: 0; }
+  }
+  @keyframes caret-blink {
+    0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; }
+  }
+  @keyframes word-rise {
+    from { transform: translateY(40px); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  .dc-hero-dots {
+    background-image:
+      radial-gradient(hsl(var(--foreground) / 0.18) 1px, transparent 1px),
+      radial-gradient(hsl(var(--foreground) / 0.18) 1px, transparent 1px);
+    background-size: 32px 32px, 32px 32px;
+    background-position: 0 0, 16px 16px;
+    animation: dot-drift 40s linear infinite;
+  }
+  .dc-marquee-track {
+    animation: marquee 40s linear infinite;
+  }
+  .dc-audit-pulse {
+    animation: audit-pulse 3s ease-in-out infinite;
+  }
+  .dc-reveal {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity 0.65s cubic-bezier(0.4,0,0.2,1), transform 0.65s cubic-bezier(0.4,0,0.2,1);
+  }
+  .dc-reveal.is-in { opacity: 1; transform: translateY(0); }
+  .dc-word { display: inline-block; opacity: 0; transform: translateY(40px); }
+  .dc-word.is-in { animation: word-rise 0.7s cubic-bezier(0.4,0,0.2,1) forwards; }
+
+  .dc-stat-card { position: relative; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), border-color 0.35s, box-shadow 0.35s; }
+  .dc-stat-card::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 2px;
+    background: #c8ff00; transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+  .dc-stat-card:hover { transform: translateY(-6px); border-color: rgba(200,255,0,0.3); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .dc-stat-card:hover::before { transform: scaleX(1); }
+
+  .dc-service-card { transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+  .dc-service-card:hover { transform: translateY(-8px); border-color: rgba(200,255,0,0.2); box-shadow: 0 24px 80px rgba(200,255,0,0.06); }
+  .dc-service-icon { transition: box-shadow 0.3s ease, transform 0.4s ease, color 0.3s ease, border-color 0.3s ease; }
+  .dc-service-card:hover .dc-service-icon { box-shadow: 0 0 24px rgba(200,255,0,0.5); transform: rotate(3deg); }
+  .dc-stack-pill { transition: background 0.3s ease, border-color 0.3s ease, color 0.3s ease; }
+  .dc-service-card:hover .dc-stack-pill { background: rgba(200,255,0,0.1); border-color: rgba(200,255,0,0.5); color: #c8ff00; }
+
+  .dc-nav-link { position: relative; }
+  .dc-nav-link::after {
+    content: ""; position: absolute; left: 12px; right: 12px; bottom: 4px; height: 1px;
+    background: #c8ff00; transform: scaleX(0); transform-origin: left; transition: transform 0.2s ease;
+  }
+  .dc-nav-link:hover::after { transform: scaleX(1); }
+
+  .dc-tech-pill { transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease; }
+  .dc-tech-pill:hover { border-color: rgba(200,255,0,0.4); color: #fff; background: rgba(200,255,0,0.04); }
+
+  .dc-case-card { transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; }
+  .dc-case-card:hover { transform: translateY(-6px); border-color: rgba(200,255,0,0.25); box-shadow: 0 24px 80px rgba(200,255,0,0.08); }
+  .dc-case-link { transition: color 0.25s ease; }
+  .dc-case-card:hover .dc-case-link { color: #c8ff00; }
+
+  .dc-cta-glow:hover { box-shadow: 0 0 40px rgba(200,255,0,0.35); }
+
+  .dc-process-step { transition: border-color 0.3s ease, transform 0.3s ease; }
+  .dc-process-step:hover { border-color: rgba(200,255,0,0.2); }
+
+  .dc-floating-cta { transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.3s ease; }
+  .dc-floating-cta:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(200,255,0,0.4); }
+}
