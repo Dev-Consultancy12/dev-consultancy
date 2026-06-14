@@ -181,6 +181,18 @@
     from { opacity: 1; }
     to   { opacity: 0; }
   }
+  @keyframes gridDrift {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(-60px); }
+  }
+  .dc-hero-grid {
+    background-image:
+      linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    animation: gridDrift 20s linear infinite;
+    will-change: transform;
+  }
 
   .dc-hero-dots {
     background-image:

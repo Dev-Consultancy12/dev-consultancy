@@ -366,6 +366,27 @@ const Landing = () => {
       <section className="relative pt-32 pb-20 px-6 overflow-hidden border-b border-border">
         {/* animated dot grid backdrop */}
         <div className="dc-hero-dots absolute inset-0 opacity-[0.35] pointer-events-none" />
+        {/* transparent grid/graph-paper overlay with slow drift */}
+        <div
+          className="dc-hero-grid absolute inset-0 pointer-events-none"
+          style={{ zIndex: 0 }}
+        />
+        {/* radial glow blob — top right (indigo) */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: 0, right: 0, width: 600, height: 600, zIndex: 0,
+            background: "radial-gradient(circle, rgba(95,121,255,0.10) 0%, transparent 70%)",
+          }}
+        />
+        {/* radial glow blob — bottom left (lime) */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            bottom: 0, left: 0, width: 500, height: 500, zIndex: 0,
+            background: "radial-gradient(circle, rgba(200,255,0,0.06) 0%, transparent 70%)",
+          }}
+        />
         {/* radial glow blobs */}
         <div
           className="absolute pointer-events-none"
