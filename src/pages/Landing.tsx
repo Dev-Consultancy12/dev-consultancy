@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight, Zap, Rocket, ShieldCheck, Cpu, Cloud, GitBranch } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
-import ScrollCircuitPath from "@/components/ScrollCircuitPath";
 
 /* Lock dev-consultancy accent tokens */
 const ACCENT_HSL = "75 100% 60%"; // electric lime #D4FF3A
@@ -295,8 +294,6 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-background overflow-x-hidden">
-      {/* Scroll-driven circuit-board overlay (desktop only) */}
-      <ScrollCircuitPath />
       {/* Page load overlay */}
       {overlay && (
         <div
