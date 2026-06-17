@@ -2,6 +2,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz@1,6..72&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -124,10 +126,12 @@
 
   html {
     background-color: hsl(0 0% 100%);
+    scroll-behavior: smooth;
   }
 
   html.dark {
     background-color: hsl(240 6% 4%);
+    scroll-behavior: smooth;
   }
 
   body {
@@ -152,6 +156,42 @@
   @keyframes marquee {
     from { transform: translateX(0); }
     to   { transform: translateX(-50%); }
+  }
+  @keyframes clients-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .dc-clients-track {
+    animation: clients-scroll 28s linear infinite;
+    will-change: transform;
+  }
+  .dc-clients-track.paused {
+    animation-play-state: paused;
+  }
+  .dc-client-card {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    flex-shrink: 0;
+  }
+  .dc-client-card:hover {
+    border-color: rgba(200, 255, 0, 0.3);
+    box-shadow: 0 0 32px rgba(200, 255, 0, 0.06);
+    transform: translateY(-4px);
+  }
+  .dc-clients-viewport {
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      90deg,
+      transparent 0%,
+      black 8%,
+      black 92%,
+      transparent 100%
+    );
   }
   @keyframes audit-pulse {
     0%, 100% { box-shadow: 0 0 0 rgba(200,255,0,0.4); }
@@ -184,6 +224,15 @@
   @keyframes gridDrift {
     0%   { transform: translateY(0); }
     100% { transform: translateY(-60px); }
+  }
+  @keyframes font-cycle {
+    0%, 33.32% { font-family: 'Instrument Serif', serif; }
+    33.33%, 66.65% { font-family: 'Playfair Display', serif; }
+    66.66%, 99.99% { font-family: 'Newsreader', serif; }
+    100% { font-family: 'Instrument Serif', serif; }
+  }
+  .dc-font-cycle {
+    animation: font-cycle 9s infinite;
   }
   .dc-hero-grid {
     background-image:
