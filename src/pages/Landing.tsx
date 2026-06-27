@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Zap, Rocket, ShieldCheck, Cpu, Cloud, GitBranch, Mail, Phone, BarChart } from "lucide-react";
+import { ArrowUpRight, Zap, Rocket, ShieldCheck, Cpu, Cloud, GitBranch, Mail, Phone, BarChart, Bell } from "lucide-react";
 import { 
   SiGooglecloud, SiDocker, SiKubernetes, SiTerraform, SiGithubactions, 
   SiJenkins, SiN8N, SiLangchain, SiOpenai, SiZapier, 
@@ -71,6 +71,13 @@ const SERVICES = [
     title: "Website & Product Launch",
     desc: "Professional websites, landing pages, product MVPs, hosting setup and launch-ready digital presence.",
     stack: ["React", "Next.js", "Tailwind", "Vite"],
+  },
+  {
+    no: "07",
+    icon: Bell,
+    title: "Notification Engines",
+    desc: "Multi-channel alerts and automated notification systems for Email, SMS, Push, and WhatsApp.",
+    stack: ["Twilio", "SendGrid", "AWS SNS", "Novu"],
   },
 ];
 
@@ -148,6 +155,53 @@ const useReveal = () => {
     document.querySelectorAll(".dc-reveal, .dc-word").forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, []);
+};
+
+/* ── Drag Scroll hook ── */
+const useDragScroll = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  const isDown = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    if (!ref.current) return;
+    isDown.current = true;
+    ref.current.style.cursor = "grabbing";
+    ref.current.style.scrollSnapType = "none";
+    startX.current = e.pageX - ref.current.offsetLeft;
+    scrollLeft.current = ref.current.scrollLeft;
+  };
+
+  const onMouseLeave = () => {
+    isDown.current = false;
+    if (ref.current) {
+      ref.current.style.cursor = "grab";
+      ref.current.style.scrollSnapType = "";
+    }
+  };
+
+  const onMouseUp = () => {
+    isDown.current = false;
+    if (ref.current) {
+      ref.current.style.cursor = "grab";
+      ref.current.style.scrollSnapType = "";
+    }
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDown.current || !ref.current) return;
+    e.preventDefault();
+    const x = e.pageX - ref.current.offsetLeft;
+    const walk = (x - startX.current) * 2;
+    ref.current.scrollLeft = scrollLeft.current - walk;
+  };
+
+  useEffect(() => {
+    if (ref.current) ref.current.style.cursor = "grab";
+  }, []);
+
+  return { ref, onMouseDown, onMouseLeave, onMouseUp, onMouseMove };
 };
 
 /* ── Counter ── */
@@ -293,6 +347,7 @@ const Landing = () => {
   }, [theme]);
 
   useReveal();
+  const dragScroll = useDragScroll();
 
   /* Page load intro overlay */
   const [overlay, setOverlay] = useState(true);
@@ -806,13 +861,13 @@ const Landing = () => {
           </div>
 
           <div 
-            className="flex overflow-x-auto snap-x snap-mandatory gap-px bg-border border border-border [&::-webkit-scrollbar]:hidden"
-            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 select-none"
+            {...dragScroll}
           >
             {SERVICES.map((s, i) => (
               <article
                 key={s.title}
-                className="dc-reveal dc-service-card bg-background p-8 flex flex-col min-h-[420px] w-[85vw] md:w-[420px] shrink-0 snap-start group hover:bg-card"
+                className="dc-reveal dc-service-card bg-background p-8 flex flex-col min-h-[420px] w-[85vw] md:w-[420px] shrink-0 snap-start group hover:bg-card border border-border"
                 style={{ transitionDelay: `${i * 50}ms` }}
               >
                 <div className="flex items-start justify-between mb-10">
