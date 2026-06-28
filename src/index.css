@@ -303,4 +303,13 @@
 
   .dc-floating-cta { transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.3s ease; }
   .dc-floating-cta:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(200,255,0,0.4); }
+
+  @keyframes process-glow {
+    0%   { border-color: rgba(255,255,255,0.08); box-shadow: none; }
+    15%  { border-color: rgba(200,255,0,0.6); box-shadow: 0 0 24px rgba(200,255,0,0.2); }
+    100% { border-color: rgba(255,255,255,0.08); box-shadow: none; }
+  }
+  .dc-process-glow-anim {
+    animation: process-glow 2.5s ease-in-out forwards;
+  }
 }

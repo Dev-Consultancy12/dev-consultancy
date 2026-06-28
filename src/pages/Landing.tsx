@@ -1,24 +1,107 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Zap, Rocket, ShieldCheck, Cpu, Cloud, GitBranch, Mail, Phone, BarChart, Bell } from "lucide-react";
-import { 
-  SiGooglecloud, SiDocker, SiKubernetes, SiTerraform, SiGithubactions, 
-  SiJenkins, SiN8N, SiLangchain, SiOpenai, SiZapier, 
-  SiPostgresql, SiRedis, SiGrafana 
+import { ArrowUpRight, Zap, Rocket, ShieldCheck, Cpu, Cloud, GitBranch, Mail, Phone, BarChart, Bell, Terminal } from "lucide-react";
+import {
+  SiGooglecloud, SiDocker, SiKubernetes, SiTerraform, SiGithubactions,
+  SiJenkins, SiN8N, SiLangchain, SiOpenai, SiZapier,
+  SiPostgresql, SiRedis, SiGrafana
 } from "react-icons/si";
 import { FaAws } from "react-icons/fa";
 import { VscAzure } from "react-icons/vsc";
 import { useTheme } from "next-themes";
 import { useEffect, useRef, useState } from "react";
 import { ScrollPath } from "@/components/ScrollPath";
-
+import { motion, useMotionValue, useSpring, useTransform, useMotionTemplate, AnimatePresence, useInView, useScroll, useMotionValueEvent } from "framer-motion";
+import { HeroTerminal } from "@/components/hero/HeroTerminal";
+import { HeroNodeGraph } from "@/components/hero/HeroNodeGraph";
+import { HeroAnalytics } from "@/components/hero/HeroAnalytics";
 /* Lock dev-consultancy accent tokens */
 const ACCENT_HSL = "75 100% 60%"; // electric lime #D4FF3A
 
 const NAV_LINKS = [
   { label: "Services", href: "#services" },
-  { label: "Clients",  href: "#clients" },
-  { label: "Process",  href: "#process" },
+  { label: "Clients", href: "#clients" },
+  { label: "Process", href: "#process" },
 ];
+
+const TopNav = () => {
+  const { scrollY } = useScroll();
+  const [navVisible, setNavVisible] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() || 0;
+    if (latest > previous && latest > 150) {
+      setNavVisible(false);
+    } else {
+      setNavVisible(true);
+    }
+    setScrolled(latest > 20);
+  });
+
+  return (
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: navVisible ? 0 : -100 }}
+      transition={{ type: "spring", stiffness: 300, damping: 30 }}
+      className="fixed top-4 left-0 right-0 z-50 flex justify-center px-4"
+    >
+      <div 
+        className="flex items-center justify-between w-full max-w-[900px] h-16 px-6 rounded-full border transition-all duration-300"
+        style={{
+          backdropFilter: "blur(24px)",
+          background: scrolled ? "rgba(10,10,10,0.8)" : "rgba(10,10,10,0.3)",
+          borderColor: scrolled ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.03)",
+          boxShadow: scrolled ? "0 10px 40px -10px rgba(0,0,0,0.5)" : "none"
+        }}
+      >
+        <Link to="/" className="flex items-center gap-2 group relative z-10">
+          <img
+            src="/logo.png"
+            alt="Dev Consultancy"
+            className="h-11 w-auto object-contain transition-all duration-300 group-hover:scale-105"
+            style={{ filter: "grayscale(1) invert(1)", opacity: 0.92 }}
+          />
+          <span className="text-[18px] font-semibold tracking-tight relative -top-0.5">
+            Dev<span className="text-muted-foreground">·</span>Consultancy
+          </span>
+        </Link>
+
+        <div className="hidden md:flex items-center gap-1 relative z-10">
+          {NAV_LINKS.map((l) => (
+            <a
+              key={l.label}
+              href={l.href}
+              onMouseEnter={() => setHoveredLink(l.label)}
+              onMouseLeave={() => setHoveredLink(null)}
+              className="relative px-4 py-1.5 text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <span className="relative z-10">{l.label}</span>
+              {hoveredLink === l.label && (
+                <motion.div
+                  layoutId="nav-highlight"
+                  className="absolute inset-0 bg-white/5 rounded-full"
+                  transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                />
+              )}
+            </a>
+          ))}
+        </div>
+
+        <a
+          href="#contact"
+          className="relative inline-flex items-center gap-1.5 text-[13px] font-medium h-9 px-5 rounded-full text-black bg-primary overflow-hidden group z-10 transition-transform active:scale-95"
+        >
+          <span className="relative z-10">Free Audit</span>
+          <ArrowUpRight className="relative z-10 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          <motion.div 
+            className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"
+          />
+        </a>
+      </div>
+    </motion.nav>
+  );
+};
 
 const TAGS = ["AI", "CLOUD", "DEVOPS", "QA AUTOMATION", "DASHBOARDS"];
 
@@ -88,21 +171,22 @@ const BADGES = [
 ];
 
 const CLIENTS = [
-  { name: "Kakaji Namkeen",     logo: "/kakaji.png",          industry: "Food & FMCG" },
-  { name: "SBJ Insurance",      logo: "/sbjinsurance.png",    industry: "Insurance" },
-  { name: "Prihul",             logo: "/prihul1.jpeg",        industry: "Retail" },
-  { name: "MyShipr",            logo: "/myshipr1.jpeg",       industry: "Logistics" },
-  { name: "Moonbeam Retreat",   logo: "/moonbeamretreatupdated.jpeg", industry: "Hospitality" },
-  { name: "Medler",             logo: "/medler.png",          industry: "Technology" },
-  { name: "Taru Yoga",          logo: "/taruyoga1.jpeg",      industry: "Wellness" },
+  { name: "Kakaji Namkeen", logo: "/kakaji.png", industry: "Food & FMCG" },
+  { name: "SBJ Insurance", logo: "/sbjinsurance.png", industry: "Insurance" },
+  { name: "Prihul", logo: "/prihul1.jpeg", industry: "Retail" },
+  { name: "MyShipr", logo: "/myshipr1.jpeg", industry: "Logistics" },
+  { name: "Moonbeam Retreat", logo: "/moonbeamretreatupdated.jpeg", industry: "Hospitality" },
+  { name: "Medler", logo: "/medler.png", industry: "Technology" },
+  { name: "Taru Yoga", logo: "/taruyoga1.jpeg", industry: "Wellness" },
+  { name: "Vardhan", logo: "/vardhan.jpeg", industry: "Healthcare" },
 ];
 
 const PROCESS = [
-  { no: "01", title: "Discovery",   desc: "We audit your current stack, workflows and bottlenecks." },
+  { no: "01", title: "Discovery", desc: "We audit your current stack, workflows and bottlenecks." },
   { no: "02", title: "Architecture", desc: "We design the system blueprint tailored to your scale." },
-  { no: "03", title: "Build",       desc: "We execute with precision — no hand-waving, just shipped code." },
-  { no: "04", title: "Deploy",      desc: "We launch with automated CI/CD pipelines and zero-downtime deploys." },
-  { no: "05", title: "Monitor",     desc: "We set up 24/7 alerting, dashboards and ongoing optimization." },
+  { no: "03", title: "Build", desc: "We execute with precision — no hand-waving, just shipped code." },
+  { no: "04", title: "Deploy", desc: "We launch with automated CI/CD pipelines and zero-downtime deploys." },
+  { no: "05", title: "Monitor", desc: "We set up 24/7 alerting, dashboards and ongoing optimization." },
 ];
 
 const STACK = [
@@ -124,9 +208,9 @@ const STACK = [
 ];
 
 const CASES = [
-  { tag: "DEVOPS",        headline: "Reduced deployment time by 3x for a Series-A SaaS startup.", metric: "3x faster",        stack: "GitHub Actions + Docker + AWS ECS" },
-  { tag: "AI AUTOMATION", headline: "Automated 70% of manual ops workflows for a logistics company.", metric: "70% saved",     stack: "n8n + OpenAI + PostgreSQL" },
-  { tag: "CLOUD INFRA",   headline: "Cut cloud costs by 40% through infrastructure optimization.", metric: "40% cost reduction", stack: "Terraform + AWS + Grafana" },
+  { tag: "DEVOPS", headline: "Reduced deployment time by 3x for a Series-A SaaS startup.", metric: "3x faster", stack: "GitHub Actions + Docker + AWS ECS" },
+  { tag: "AI AUTOMATION", headline: "Automated 70% of manual ops workflows for a logistics company.", metric: "70% saved", stack: "n8n + OpenAI + PostgreSQL" },
+  { tag: "CLOUD INFRA", headline: "Cut cloud costs by 40% through infrastructure optimization.", metric: "40% cost reduction", stack: "Terraform + AWS + Grafana" },
 ];
 
 const FAQS = [
@@ -313,32 +397,139 @@ const FontCycleWord = () => {
     }, 3000);
     return () => clearInterval(interval);
   }, []);
-
   return (
     <span
       style={{
-        display: "inline-flex",
-        alignItems: "center",
-        height: "1.1em",
-        verticalAlign: "bottom",
-        fontFamily: fonts[idx].family,
-        fontStyle: fonts[idx].style,
-        fontWeight: fonts[idx].weight,
-        color: "#c8ff00",
-        opacity: fading ? 0 : 1,
-        transition: "opacity 0.35s ease",
-        minWidth: "8ch",
-        textAlign: "left",
-        lineHeight: "1",
+        display: "inline-block",
+        position: "relative",
+        width: "4.5em", // Fixed width prevents horizontal jumping
       }}
     >
-      automate
+      {/* Invisible placeholder guarantees the line box height never changes */}
+      <span style={{ visibility: "hidden", pointerEvents: "none" }}>
+        automate
+      </span>
+      {/* Absolutely positioned animated word */}
+      <span
+        style={{
+          position: "absolute",
+          left: 0,
+          bottom: "0.05em", // Aligns closely to the baseline
+          fontFamily: fonts[idx].family,
+          fontStyle: fonts[idx].style,
+          fontWeight: fonts[idx].weight,
+          color: "#c8ff00",
+          opacity: fading ? 0 : 1,
+          transition: "opacity 0.35s ease",
+          whiteSpace: "nowrap",
+          lineHeight: "1",
+        }}
+      >
+        automate
+      </span>
     </span>
+  );
+};
+
+const ServiceCard = ({ s, i }: { s: any; i: number }) => {
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top } = currentTarget.getBoundingClientRect();
+    mouseX.set(clientX - left);
+    mouseY.set(clientY - top);
+  }
+
+  return (
+    <motion.article
+      className="dc-reveal relative bg-background p-8 flex flex-col min-h-[420px] w-[85vw] md:w-[420px] shrink-0 snap-start group border border-border overflow-hidden"
+      style={{ transitionDelay: `${i * 50}ms` }}
+      onMouseMove={handleMouseMove}
+      initial="initial"
+      whileHover="hover"
+      variants={{
+        initial: { y: 0, borderColor: "rgba(255,255,255,0.1)" },
+        hover: { y: -8, borderColor: "rgba(200,255,0,0.2)" }
+      }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+    >
+      {/* Spotlight overlay */}
+      <motion.div
+        className="pointer-events-none absolute -inset-px opacity-0 transition duration-300 group-hover:opacity-100 z-0"
+        style={{
+          background: useMotionTemplate`
+            radial-gradient(
+              400px circle at ${mouseX}px ${mouseY}px,
+              rgba(200,255,0,0.06),
+              transparent 40%
+            )
+          `,
+        }}
+      />
+
+      <div className="relative z-10 flex flex-col h-full">
+        <div className="flex items-start justify-between mb-10">
+          <span className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground">
+            {s.no}
+          </span>
+          <motion.div
+            variants={{
+              initial: { scale: 1, rotate: 0, boxShadow: "none", color: "var(--foreground)" },
+              hover: { scale: 1.1, rotate: 5, boxShadow: "0 0 24px rgba(200,255,0,0.3)", color: "var(--primary)" }
+            }}
+            className="h-10 w-10 grid place-items-center border border-border group-hover:border-primary bg-background"
+          >
+            <s.icon className="h-4 w-4" />
+          </motion.div>
+        </div>
+
+        <h3 className="font-display text-[26px] leading-[1.1] tracking-[-0.02em] mb-4">
+          {s.title}
+        </h3>
+        <p className="text-[14px] leading-[1.6] text-muted-foreground mb-8">
+          {s.desc}
+        </p>
+
+        <div className="mt-auto pt-6 border-t border-border flex flex-wrap gap-2">
+          {s.stack.map((tag: string) => (
+            <motion.span
+              key={tag}
+              variants={{
+                initial: { backgroundColor: "transparent", color: "var(--muted-foreground)" },
+                hover: { backgroundColor: "rgba(200,255,0,0.1)", color: "var(--primary)" }
+              }}
+              className="font-mono text-[10px] tracking-wider uppercase border border-border px-2 py-1"
+            >
+              {tag}
+            </motion.span>
+          ))}
+        </div>
+      </div>
+    </motion.article>
   );
 };
 
 const Landing = () => {
   const { theme } = useTheme();
+
+  const [activeAsset, setActiveAsset] = useState<number>(0);
+
+  // Parallax / Interaction refs
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springConfig = { damping: 20, stiffness: 100, mass: 0.5 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
+  const heroX = useTransform(smoothX, [-500, 500], [-15, 15]);
+  const heroY = useTransform(smoothY, [-500, 500], [-15, 15]);
+
+  const handleHeroMouseMove = (e: React.MouseEvent) => {
+    const { clientX, clientY } = e;
+    const { innerWidth, innerHeight } = window;
+    mouseX.set(clientX - innerWidth / 2);
+    mouseY.set(clientY - innerHeight / 2);
+  };
 
   useEffect(() => {
     const root = document.documentElement;
@@ -436,25 +627,7 @@ const Landing = () => {
 
   /* Process section line trigger */
   const processRef = useRef<HTMLDivElement>(null);
-  const [processIn, setProcessIn] = useState(false);
-
-  useEffect(() => {
-    const el = processRef.current;
-    if (!el) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            setProcessIn(true);
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.3 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
+  const processIn = useInView(processRef, { once: true, margin: "-100px" });
 
   /* Stats trigger */
   const statsRef = useRef<HTMLDivElement>(null);
@@ -478,7 +651,6 @@ const Landing = () => {
       className="min-h-screen bg-background text-foreground font-sans selection:bg-primary selection:text-background overflow-x-hidden"
       style={{ position: "relative" }}
     >
-      <ScrollPath />
       {/* Page load overlay */}
       {overlay && (
         <div
@@ -506,71 +678,13 @@ const Landing = () => {
       />
 
       {/* ───────────── NAV ───────────── */}
-      <nav
-        className="fixed top-0 z-50 w-full"
-        style={{
-          backdropFilter: scrolled ? "blur(20px)" : "blur(8px)",
-          background: scrolled ? "rgba(10,10,10,0.85)" : "rgba(10,10,10,0.4)",
-          borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent",
-          transition: "all 0.3s ease",
-        }}
-      >
-        <div className="mx-auto flex h-20 max-w-[1280px] items-center justify-between px-6">
-          <Link to="/" className="flex items-center gap-2">
-            <img
-              src="/logo.png"
-              alt="Dev Consultancy"
-              style={{
-                height: 60,
-                width: "auto",
-                objectFit: "contain",
-                filter: "grayscale(1) invert(1)",
-                mixBlendMode: "screen",
-                opacity: 0.92,
-                transition: "all 0.2s ease",
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.filter = "grayscale(1) invert(1) sepia(1) saturate(3) hue-rotate(40deg)";
-                e.currentTarget.style.opacity = "1";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.filter = "grayscale(1) invert(1)";
-                e.currentTarget.style.opacity = "0.92";
-              }}
-            />
-            <span className="text-[20px] font-semibold tracking-tight relative -top-1">
-              Dev<span className="text-muted-foreground">·</span>Consultancy
-            </span>
-          </Link>
-
-          <div className="hidden md:flex items-center gap-1">
-            {NAV_LINKS.map((l) => (
-              <a
-                key={l.label}
-                href={l.href}
-                className="dc-nav-link text-[13px] text-muted-foreground hover:text-foreground transition-colors px-3 py-1.5"
-              >
-                {l.label}
-              </a>
-            ))}
-          </div>
-
-          <a
-            href="#contact"
-            className="dc-audit-pulse group inline-flex items-center gap-1.5 text-[13px] font-medium bg-foreground text-background h-9 px-4 hover:bg-primary hover:text-background transition-colors"
-            style={{
-              boxShadow: undefined,
-              animation: "audit-pulse 3s ease-in-out infinite",
-            }}
-          >
-            Free Audit
-            <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-          </a>
-        </div>
-      </nav>
+      <TopNav />
 
       {/* ───────────── HERO ───────────── */}
-      <section className="relative pt-32 pb-20 px-6 overflow-hidden border-b border-border">
+      <section
+        className="relative pt-32 pb-20 px-6 overflow-hidden border-b border-border"
+        onMouseMove={handleHeroMouseMove}
+      >
         {/* animated dot grid backdrop */}
         <div className="dc-hero-dots absolute inset-0 opacity-[0.35] pointer-events-none" />
         {/* transparent grid/graph-paper overlay with slow drift */}
@@ -579,109 +693,176 @@ const Landing = () => {
           style={{ zIndex: 0 }}
         />
         {/* radial glow blob — top right (indigo) */}
-        <div
+        <motion.div
           className="absolute pointer-events-none"
           style={{
             top: 0, right: 0, width: 600, height: 600, zIndex: 0,
             background: "radial-gradient(circle, rgba(95,121,255,0.10) 0%, transparent 70%)",
+            x: useTransform(smoothX, (v) => -v * 0.15),
+            y: useTransform(smoothY, (v) => -v * 0.15),
           }}
         />
         {/* radial glow blob — bottom left (lime) */}
-        <div
+        <motion.div
           className="absolute pointer-events-none"
           style={{
             bottom: 0, left: 0, width: 500, height: 500, zIndex: 0,
             background: "radial-gradient(circle, rgba(200,255,0,0.06) 0%, transparent 70%)",
+            x: useTransform(smoothX, (v) => v * 0.15),
+            y: useTransform(smoothY, (v) => v * 0.15),
           }}
         />
         {/* radial glow blobs */}
-        <div
+        <motion.div
           className="absolute pointer-events-none"
           style={{
             top: "-120px", right: "-120px", width: 700, height: 700,
-            background: "rgba(95,121,255,0.10)", filter: "blur(140px)", zIndex: 0,
+            background: "radial-gradient(circle, rgba(95,121,255,0.10) 0%, transparent 70%)",
+            x: useTransform(smoothX, (v) => -v * 0.10),
+            y: useTransform(smoothY, (v) => -v * 0.10),
           }}
         />
-        <div
+        <motion.div
           className="absolute pointer-events-none"
           style={{
             bottom: "-160px", left: "-120px", width: 700, height: 700,
-            background: "rgba(200,255,0,0.05)", filter: "blur(140px)", zIndex: 0,
+            background: "radial-gradient(circle, rgba(200,255,0,0.06) 0%, transparent 70%)",
+            x: useTransform(smoothX, (v) => v * 0.10),
+            y: useTransform(smoothY, (v) => v * 0.10),
           }}
         />
-        <div className="mx-auto max-w-[1280px] relative">
-          {/* eyebrow tags ticker */}
-          <div className="dc-reveal flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-10">
-            {TAGS.map((t, i) => (
-              <span key={t} className="flex items-center gap-3">
-                {i > 0 && <span className="text-primary">•</span>}
-                <span>{t}</span>
-              </span>
-            ))}
+        <div className="mx-auto max-w-[1280px] relative z-10 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="lg:col-span-7 xl:col-span-7 flex flex-col justify-center">
+            {/* eyebrow tags ticker */}
+            <div className="dc-reveal flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[11px] tracking-[0.18em] text-muted-foreground mb-10">
+              {TAGS.map((t, i) => (
+                <span key={t} className="flex items-center gap-3">
+                  {i > 0 && <span className="text-primary">•</span>}
+                  <span>{t}</span>
+                </span>
+              ))}
+            </div>
+
+            <motion.h1
+              className="font-display text-[clamp(2.5rem,4vw,4.5rem)] xl:text-[5rem] leading-[0.95] tracking-[-0.03em] max-w-[1100px]"
+            >
+              {["We", "help", "startups"].map((word, i) => (
+                <motion.span
+                  key={word}
+                  className="inline-block mr-[0.25em]"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + i * 0.08, type: "spring", stiffness: 100, damping: 14 }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+              <br />
+              <motion.span
+                className="inline-block mr-[0.25em]"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + 3 * 0.08, type: "spring", stiffness: 100, damping: 14 }}
+              >
+                <FontCycleWord />
+              </motion.span>
+              <br />
+              {["scale", "and"].map((word, i) => (
+                <motion.span
+                  key={word}
+                  className="inline-block mr-[0.25em]"
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 + (i + 4) * 0.08, type: "spring", stiffness: 100, damping: 14 }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+              <motion.span
+                className="inline-block italic font-serif font-normal"
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + 6 * 0.08, type: "spring", stiffness: 100, damping: 14 }}
+              >
+                deploy faster.
+              </motion.span>
+            </motion.h1>
+
+            <p className="dc-reveal mt-8 text-[17px] leading-[1.55] text-muted-foreground max-w-[480px]">
+              Architectural precision meets high-speed execution. Elevating digital
+              infrastructure for modern enterprises.
+            </p>
+
+            <div className="dc-reveal mt-10 flex flex-wrap items-center gap-3">
+              <a
+                ref={magRef}
+                href="https://api.whatsapp.com/send/?phone=919654722000&text=Hi+Dev+Consultancy%2C+I+want+a+free+consultation&type=phone_number&app_absent=0"
+                target="_blank" rel="noreferrer"
+                className="group inline-flex items-center gap-2 bg-primary text-background h-12 px-6 text-[14px] font-medium hover:opacity-90 transition-opacity"
+              >
+                <WhatsappIcon className="h-4 w-4" />
+                Book Free Consultation
+              </a>
+              <a
+                href="#services"
+                className="inline-flex items-center gap-2 border border-foreground/30 text-foreground h-12 px-6 text-[14px] font-medium hover:bg-foreground hover:text-background transition-colors"
+              >
+                Explore Services
+              </a>
+            </div>
+
+            <div className="dc-reveal mt-14 flex flex-wrap gap-x-8 gap-y-3">
+              {BADGES.map((b) => (
+                <div key={b.label} className="flex items-center gap-2 text-[13px] text-muted-foreground">
+                  <b.icon className="h-4 w-4 text-primary" />
+                  <span>{b.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <h1 className="font-display text-[clamp(2.5rem,7vw,6rem)] leading-[0.95] tracking-[-0.03em] max-w-[1100px]">
-            {["We", "help", "startups"].map((word, i) => (
-              <span
-                key={word}
-                className="dc-word mr-[0.25em]"
-                style={{ animationDelay: `${200 + i * 60}ms` }}
-              >
-                {word}
-              </span>
-            ))}
-            <br />
-            <span className="dc-word" style={{ animationDelay: `${380}ms`, verticalAlign: "bottom" }}>
-              <FontCycleWord />
-            </span>
-            <br />
-            {["scale", "and"].map((word, i) => (
-              <span
-                key={word}
-                className="dc-word mr-[0.25em]"
-                style={{ animationDelay: `${440 + i * 60}ms` }}
-              >
-                {word}
-              </span>
-            ))}
-            <span
-              className="dc-word italic font-serif font-normal"
-              style={{ animationDelay: "560ms" }}
-            >
-              deploy faster.
-            </span>
-          </h1>
+          <div className="relative hidden lg:block lg:col-span-5 xl:col-span-5 perspective-[1000px]">
+            <AnimatePresence mode="wait">
+              {activeAsset === 0 && (
+                <motion.div key="terminal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
+                  <HeroTerminal />
+                </motion.div>
+              )}
+              {activeAsset === 1 && (
+                <motion.div key="graph" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
+                  <HeroNodeGraph />
+                </motion.div>
+              )}
+              {activeAsset === 2 && (
+                <motion.div key="analytics" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
+                  <HeroAnalytics />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-          <p className="dc-reveal mt-8 text-[17px] leading-[1.55] text-muted-foreground max-w-[560px]">
-            Architectural precision meets high-speed execution. Elevating digital
-            infrastructure for modern enterprises.
-          </p>
-
-          <div className="dc-reveal mt-10 flex flex-wrap items-center gap-3">
-            <a
-              ref={magRef}
-              href="https://api.whatsapp.com/send/?phone=919654722000&text=Hi+Dev+Consultancy%2C+I+want+a+free+consultation&type=phone_number&app_absent=0"
-              target="_blank" rel="noreferrer"
-              className="group inline-flex items-center gap-2 bg-primary text-background h-12 px-6 text-[14px] font-medium hover:opacity-90 transition-opacity"
-            >
-              <WhatsappIcon className="h-4 w-4" />
-              Book Free Consultation
-            </a>
-            <a
-              href="#services"
-              className="inline-flex items-center gap-2 border border-foreground/30 text-foreground h-12 px-6 text-[14px] font-medium hover:bg-foreground hover:text-background transition-colors"
-            >
-              Explore Services
-            </a>
-          </div>
-
-          <div className="dc-reveal mt-14 flex flex-wrap gap-x-8 gap-y-3">
-            {BADGES.map((b) => (
-              <div key={b.label} className="flex items-center gap-2 text-[13px] text-muted-foreground">
-                <b.icon className="h-4 w-4 text-primary" />
-                <span>{b.label}</span>
-              </div>
-            ))}
+            {/* Demo Switcher */}
+            <div className="sticky bottom-4 mx-auto w-max mt-8 flex items-center gap-2 bg-black/40 backdrop-blur-md border border-border/50 p-1.5 rounded-full z-20 shadow-2xl">
+              {[
+                { label: "Terminal", icon: Terminal },
+                { label: "Data Pipeline", icon: GitBranch },
+                { label: "Analytics", icon: BarChart }
+              ].map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveAsset(idx)}
+                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[11px] font-mono tracking-wider uppercase transition-colors relative ${activeAsset === idx
+                      ? "bg-primary text-black"
+                      : "text-muted-foreground hover:text-foreground"
+                    }`}
+                >
+                  <item.icon className="w-[10px] h-[10px]" />
+                  {item.label}
+                  {activeAsset === idx && (
+                    <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(200,255,0,0.8)]" />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -700,7 +881,7 @@ const Landing = () => {
           {Array.from({ length: 2 }).map((_, k) => (
             <div key={k} className="flex items-center gap-8 px-4">
               {Array.from({ length: 3 }).flatMap(() =>
-                ["AUTOMATION","CLOUD INFRA","CI/CD","AI WORKFLOWS","DEVOPS","QA TESTING","MONITORING","SCALABLE SYSTEMS","FAST DELIVERY"]
+                ["AUTOMATION", "CLOUD INFRA", "CI/CD", "AI WORKFLOWS", "DEVOPS", "QA TESTING", "MONITORING", "SCALABLE SYSTEMS", "FAST DELIVERY"]
               ).map((t, i) => (
                 <span key={i} className="font-sans" style={{ color: "rgba(255,255,255,0.25)", fontSize: 13, letterSpacing: "0.15em", fontWeight: 400 }}>
                   {t} <span className="ml-8">•</span>
@@ -711,7 +892,9 @@ const Landing = () => {
         </div>
       </div>
 
-      {/* ───────────── METRICS ───────────── */}
+      
+
+{/* ───────────── METRICS ───────────── */}
       <section id="metrics" className="px-6 py-24 border-b border-border">
         <div className="mx-auto max-w-[1280px]">
           <div className="grid md:grid-cols-12 gap-10 mb-16">
@@ -752,7 +935,9 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ───────────── CLIENTS ───────────── */}
+      
+
+{/* ───────────── CLIENTS ───────────── */}
       <section id="clients" className="py-20 border-b border-border overflow-hidden">
         <div className="mx-auto max-w-[1280px] px-6 mb-12">
           {/* <Typewriter
@@ -840,7 +1025,9 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ───────────── SERVICES ───────────── */}
+      
+      
+{/* ───────────── SERVICES ───────────── */}
       <section id="services" className="px-6 py-24 border-b border-border">
         <div className="mx-auto max-w-[1280px]">
           <div className="grid md:grid-cols-12 gap-10 mb-16">
@@ -860,49 +1047,20 @@ const Landing = () => {
             </div>
           </div>
 
-          <div 
+          <div
             className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-6 select-none"
             {...dragScroll}
           >
             {SERVICES.map((s, i) => (
-              <article
-                key={s.title}
-                className="dc-reveal dc-service-card bg-background p-8 flex flex-col min-h-[420px] w-[85vw] md:w-[420px] shrink-0 snap-start group hover:bg-card border border-border"
-                style={{ transitionDelay: `${i * 50}ms` }}
-              >
-                <div className="flex items-start justify-between mb-10">
-                  <span className="font-mono text-[11px] tracking-[0.18em] text-muted-foreground">
-                    {s.no}
-                  </span>
-                  <div className="dc-service-icon h-10 w-10 grid place-items-center border border-border group-hover:border-primary group-hover:text-primary">
-                    <s.icon className="h-4 w-4" />
-                  </div>
-                </div>
-
-                <h3 className="font-display text-[26px] leading-[1.1] tracking-[-0.02em] mb-4">
-                  {s.title}
-                </h3>
-                <p className="text-[14px] leading-[1.6] text-muted-foreground mb-8">
-                  {s.desc}
-                </p>
-
-                <div className="mt-auto pt-6 border-t border-border flex flex-wrap gap-2">
-                  {s.stack.map((tag) => (
-                    <span
-                      key={tag}
-                      className="dc-stack-pill font-mono text-[10px] tracking-wider uppercase text-muted-foreground border border-border px-2 py-1"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </article>
+              <ServiceCard key={s.title} s={s} i={i} />
             ))}
           </div>
         </div>
       </section>
 
-      {/* ───────────── PROCESS ───────────── */}
+      
+
+{/* ───────────── PROCESS ───────────── */}
       <section id="process" className="px-6 py-24 border-b border-border">
         <div className="mx-auto max-w-[1280px]">
           <div className="mb-16">
@@ -913,33 +1071,40 @@ const Landing = () => {
           </div>
 
           <div className="relative" ref={processRef}>
-            <svg className="hidden md:block absolute top-1/2 left-0 w-full" height="1" style={{ overflow: "visible" }}>
-              <line
-                x1="0" y1="0" x2="100%" y2="0"
-                stroke="rgba(255,255,255,0.08)"
-                strokeWidth="1"
-                strokeDasharray="2000"
-                strokeDashoffset={processIn ? 0 : 2000}
-                style={{
-                  transition: processIn
-                    ? "stroke-dashoffset 1.4s cubic-bezier(0.4, 0, 0.2, 1) 0.2s"
-                    : "none",
-                }}
-              />
-            </svg>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 relative" style={{ zIndex: 1 }}>
               {PROCESS.map((p, i) => (
                 <div
                   key={p.no}
-                  className="dc-reveal dc-process-step p-6"
+                  className={`dc-process-step p-6 group cursor-default ${processIn ? "dc-process-glow-anim" : ""}`}
                   style={{
                     background: "rgba(255,255,255,0.02)",
                     border: "1px solid rgba(255,255,255,0.08)",
                     borderRadius: 16,
-                    transitionDelay: `${i * 100}ms`,
+                    opacity: processIn ? 1 : 0.3,
+                    transform: processIn ? "translateY(0)" : "translateY(20px)",
+                    transition: "opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)",
+                    transitionDelay: processIn ? `${0.2 + i * 0.35}s` : "0s",
+                    animationDelay: processIn ? `${0.8 + i * 0.4}s` : "0s",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (!processIn) return;
+                    e.currentTarget.style.borderColor = "var(--primary)";
+                    e.currentTarget.style.boxShadow = "0 0 20px rgba(200,255,0,0.15)";
+                    e.currentTarget.style.transform = "translateY(-4px)";
+                    e.currentTarget.style.transitionDelay = "0s";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = "";
+                    e.currentTarget.style.boxShadow = "";
+                    e.currentTarget.style.transform = "";
                   }}
                 >
-                  <div className="font-display" style={{ fontSize: 48, color: "rgba(255,255,255,0.15)", lineHeight: 1 }}>{p.no}</div>
+                  <div
+                    className="font-display transition-colors duration-300 group-hover:text-primary"
+                    style={{ fontSize: 48, color: processIn ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.15)", lineHeight: 1 }}
+                  >
+                    {p.no}
+                  </div>
                   <h3 className="text-white mt-4" style={{ fontSize: 18 }}>{p.title}</h3>
                   <p className="mt-2" style={{ fontSize: 14, color: "rgba(255,255,255,0.5)", lineHeight: 1.5 }}>{p.desc}</p>
                 </div>
@@ -949,7 +1114,9 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ───────────── TECH STACK ───────────── */}
+      
+
+{/* ───────────── TECH STACK ───────────── */}
       <section id="stack" className="px-6 py-24 border-b border-border">
         <div className="mx-auto max-w-[1280px]">
           <div className="mb-12">
@@ -963,9 +1130,19 @@ const Landing = () => {
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             {STACK.map((t, i) => (
-              <div
+              <motion.div
                 key={t.name}
-                className="dc-reveal dc-tech-pill flex items-center gap-3"
+                initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ delay: i * 0.05, type: "spring", stiffness: 100, damping: 15 }}
+                whileHover={{
+                  scale: 1.05,
+                  backgroundColor: "rgba(200,255,0,0.05)",
+                  borderColor: "rgba(200,255,0,0.4)",
+                  color: "#ffffff"
+                }}
+                className="flex items-center gap-3 cursor-default"
                 style={{
                   background: "rgba(255,255,255,0.03)",
                   border: "1px solid rgba(255,255,255,0.08)",
@@ -973,12 +1150,11 @@ const Landing = () => {
                   padding: "12px 20px",
                   color: "rgba(255,255,255,0.6)",
                   fontSize: 13,
-                  transitionDelay: `${i * 50}ms`,
                 }}
               >
                 <t.icon className="h-4 w-4 text-primary opacity-80" />
                 {t.name}
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
@@ -1172,7 +1348,7 @@ const Landing = () => {
           );
         })}
         <div className="mx-auto max-w-[1280px] relative">
-          <div 
+          <div
             className="border border-border bg-background p-10 md:p-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-8"
             style={{ position: 'relative', zIndex: 1 }}
           >
