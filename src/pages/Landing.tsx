@@ -418,7 +418,10 @@ const FontCycleWord = () => {
           fontFamily: fonts[idx].family,
           fontStyle: fonts[idx].style,
           fontWeight: fonts[idx].weight,
-          color: "#c8ff00",
+          background: "linear-gradient(90deg, #c8ff00, #00ff88)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          filter: "drop-shadow(0 0 15px rgba(200,255,0,0.4))",
           opacity: fading ? 0 : 1,
           transition: "opacity 0.35s ease",
           whiteSpace: "nowrap",
@@ -692,45 +695,7 @@ const Landing = () => {
           className="dc-hero-grid absolute inset-0 pointer-events-none"
           style={{ zIndex: 0 }}
         />
-        {/* radial glow blob — top right (indigo) */}
-        <motion.div
-          className="absolute pointer-events-none"
-          style={{
-            top: 0, right: 0, width: 600, height: 600, zIndex: 0,
-            background: "radial-gradient(circle, rgba(95,121,255,0.10) 0%, transparent 70%)",
-            x: useTransform(smoothX, (v) => -v * 0.15),
-            y: useTransform(smoothY, (v) => -v * 0.15),
-          }}
-        />
-        {/* radial glow blob — bottom left (lime) */}
-        <motion.div
-          className="absolute pointer-events-none"
-          style={{
-            bottom: 0, left: 0, width: 500, height: 500, zIndex: 0,
-            background: "radial-gradient(circle, rgba(200,255,0,0.06) 0%, transparent 70%)",
-            x: useTransform(smoothX, (v) => v * 0.15),
-            y: useTransform(smoothY, (v) => v * 0.15),
-          }}
-        />
-        {/* radial glow blobs */}
-        <motion.div
-          className="absolute pointer-events-none"
-          style={{
-            top: "-120px", right: "-120px", width: 700, height: 700,
-            background: "radial-gradient(circle, rgba(95,121,255,0.10) 0%, transparent 70%)",
-            x: useTransform(smoothX, (v) => -v * 0.10),
-            y: useTransform(smoothY, (v) => -v * 0.10),
-          }}
-        />
-        <motion.div
-          className="absolute pointer-events-none"
-          style={{
-            bottom: "-160px", left: "-120px", width: 700, height: 700,
-            background: "radial-gradient(circle, rgba(200,255,0,0.06) 0%, transparent 70%)",
-            x: useTransform(smoothX, (v) => v * 0.10),
-            y: useTransform(smoothY, (v) => v * 0.10),
-          }}
-        />
+        {/* radial glow blobs removed by request */}
         <div className="mx-auto max-w-[1280px] relative z-10 grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
           <div className="lg:col-span-7 xl:col-span-7 flex flex-col justify-center">
             {/* eyebrow tags ticker */}
