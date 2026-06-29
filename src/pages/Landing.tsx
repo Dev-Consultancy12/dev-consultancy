@@ -208,9 +208,46 @@ const STACK = [
 ];
 
 const CASES = [
-  { tag: "DEVOPS", headline: "Reduced deployment time by 3x for a Series-A SaaS startup.", metric: "3x faster", stack: "GitHub Actions + Docker + AWS ECS" },
-  { tag: "AI AUTOMATION", headline: "Automated 70% of manual ops workflows for a logistics company.", metric: "70% saved", stack: "n8n + OpenAI + PostgreSQL" },
-  { tag: "CLOUD INFRA", headline: "Cut cloud costs by 40% through infrastructure optimization.", metric: "40% cost reduction", stack: "Terraform + AWS + Grafana" },
+  { 
+    tag: "DEVOPS", 
+    headline: "Reduced deployment time by 3x for a Series-A SaaS startup.", 
+    metric: "3x faster", 
+    stack: "GitHub Actions + Docker + AWS ECS",
+    challenge: "Manual, error-prone deployments were bottlenecking product releases.",
+    solution: "Implemented automated CI/CD pipelines with containerized workloads."
+  },
+  { 
+    tag: "AI AUTOMATION", 
+    headline: "Automated 70% of manual ops workflows for a logistics company.", 
+    metric: "70% saved", 
+    stack: "n8n + OpenAI + PostgreSQL",
+    challenge: "Operations team was drowning in manual data entry and email routing.",
+    solution: "Built custom LLM-powered workflows to parse, route, and log requests."
+  },
+  { 
+    tag: "CLOUD INFRA", 
+    headline: "Cut cloud costs by 40% through infrastructure optimization.", 
+    metric: "40% reduction", 
+    stack: "Terraform + AWS + Grafana",
+    challenge: "Cloud spend was spiraling out of control due to over-provisioned resources.",
+    solution: "Rightsized instances, implemented auto-scaling, and migrated to spot instances."
+  },
+  {
+    tag: "DATA ENGINEERING",
+    headline: "Scaled analytics infrastructure to process 50M+ daily events.",
+    metric: "50M+ events",
+    stack: "Snowflake + dbt + Airflow",
+    challenge: "Legacy database was crashing under heavy read loads, delaying reports by days.",
+    solution: "Architected a scalable modern data stack with automated ETL pipelines."
+  },
+  {
+    tag: "SECURITY",
+    headline: "Achieved SOC2 compliance readiness in under 4 weeks.",
+    metric: "SOC2 ready",
+    stack: "Vanta + AWS Security Hub + Datadog",
+    challenge: "Enterprise B2B deals were stalled due to a lack of formal security certifications.",
+    solution: "Automated compliance monitoring, access controls, and continuous infrastructure auditing."
+  }
 ];
 
 const FAQS = [
@@ -646,6 +683,9 @@ const Landing = () => {
 
   /* FAQ state */
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  /* Case Studies State */
+  const [activeCase, setActiveCase] = useState(0);
 
   const headlineWords = ["We", "help", "startups"];
 
@@ -1172,43 +1212,86 @@ const Landing = () => {
               Results we've <span className="italic font-serif font-normal">delivered.</span>
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {CASES.map((c, i) => (
-              <article
-                key={c.headline}
-                className="dc-reveal dc-case-card flex flex-col"
-                style={{
-                  background: "rgba(255,255,255,0.02)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: 16,
-                  padding: 28,
-                  transitionDelay: `${i * 100}ms`,
-                }}
-              >
-                <span
-                  className="font-mono inline-block self-start mb-6"
-                  style={{
-                    background: "rgba(200,255,0,0.1)",
-                    border: "1px solid rgba(200,255,0,0.3)",
-                    color: "#c8ff00",
-                    borderRadius: 100,
-                    padding: "4px 12px",
-                    fontSize: 10,
-                    letterSpacing: "0.15em",
-                  }}
+          <div className="dc-reveal flex flex-col lg:flex-row gap-8 lg:gap-12">
+            {/* Left Panel: The Radar (Tabs) */}
+            <div className="flex flex-col gap-3 w-full lg:w-[380px] shrink-0">
+              {CASES.map((c, i) => {
+                const isActive = activeCase === i;
+                return (
+                  <button
+                    key={c.headline}
+                    onClick={() => setActiveCase(i)}
+                    className={`text-left p-6 rounded-2xl transition-all duration-300 border-l-[3px] ${
+                      isActive 
+                        ? 'bg-white/[0.04] border-primary text-white' 
+                        : 'bg-transparent border-transparent text-white/40 hover:bg-white/[0.02] hover:text-white/80'
+                    }`}
+                    style={{ transitionDelay: `${i * 100}ms` }}
+                  >
+                    <span className={`font-mono text-[11px] uppercase tracking-[0.2em] block mb-3 transition-colors ${isActive ? 'text-primary' : 'text-white/30'}`}>
+                      {c.tag}
+                    </span>
+                    <span className="font-display text-[20px] leading-[1.3] line-clamp-2">
+                      {c.headline}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Right Panel: The Output (Active Case Study) */}
+            <div className="flex-1 relative rounded-[2rem] bg-[#050505] border border-white/10 overflow-hidden grid" style={{ transitionDelay: '200ms' }}>
+              {/* Subtle tech grid background */}
+              <div className="absolute inset-0 dc-hero-grid opacity-[0.05] pointer-events-none" />
+              <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 blur-[150px] rounded-full pointer-events-none translate-x-1/3 -translate-y-1/3" />
+              
+              {CASES.map((c, i) => (
+                <div
+                  key={c.headline}
+                  className={`col-start-1 row-start-1 p-8 md:p-14 flex flex-col transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                    activeCase === i 
+                      ? 'opacity-100 translate-y-0 pointer-events-auto z-10' 
+                      : 'opacity-0 translate-y-8 pointer-events-none z-0'
+                  }`}
                 >
-                  {c.tag}
-                </span>
-                <h3 className="font-display text-white" style={{ fontSize: 20, lineHeight: 1.3 }}>{c.headline}</h3>
-                <div className="font-display text-white mt-6" style={{ fontSize: 36, letterSpacing: "-0.02em" }}>{c.metric}</div>
-                <div className="mt-auto pt-8 flex items-center justify-between">
-                  <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{c.stack}</span>
+                  <div className="mb-auto">
+                    <h3 className="font-display text-[clamp(1.8rem,3vw,3rem)] leading-[1.1] tracking-[-0.02em] text-white max-w-[600px] mb-8">
+                      {c.headline}
+                    </h3>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-[600px]">
+                      <div className="bg-white/[0.02] border border-white/5 p-5 rounded-xl">
+                        <span className="font-mono text-white/40 text-[10px] uppercase tracking-widest block mb-2">The Challenge</span>
+                        <p className="text-white/70 text-[14px] leading-relaxed">{c.challenge}</p>
+                      </div>
+                      <div className="bg-primary/[0.02] border border-primary/10 p-5 rounded-xl">
+                        <span className="font-mono text-primary/60 text-[10px] uppercase tracking-widest block mb-2">The Solution</span>
+                        <p className="text-white/80 text-[14px] leading-relaxed">{c.solution}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-12 flex flex-col sm:flex-row sm:items-end justify-between gap-8 border-t border-white/10 pt-10">
+                    <div>
+                      <span className="font-mono text-white/40 text-[11px] uppercase tracking-widest flex items-center gap-2 mb-4">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(200,255,0,0.8)]" />
+                        Impact Metric
+                      </span>
+                      <div className="font-display font-bold text-primary text-[clamp(4rem,6vw,6rem)] leading-[0.9] tracking-[-0.04em]" style={{ textShadow: '0 0 60px rgba(200,255,0,0.2)' }}>
+                        {c.metric}
+                      </div>
+                    </div>
+                    
+                    <div className="sm:text-right shrink-0">
+                      <span className="font-mono text-white/40 text-[11px] uppercase tracking-widest block mb-4">Architecture</span>
+                      <div className="font-mono text-white/80 text-[14px] bg-white/[0.03] px-5 py-3 rounded-xl border border-white/10 shadow-inner">
+                        {c.stack}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <a href="#contact" className="dc-case-link mt-4 text-[13px]" style={{ color: "rgba(255,255,255,0.3)" }}>
-                  View Details →
-                </a>
-              </article>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -1263,130 +1346,88 @@ const Landing = () => {
       </section>
 
       {/* ───────────── CTA ───────────── */}
-      <section id="contact" className="px-6 py-24 border-b border-border relative overflow-hidden">
-        <div
-          aria-hidden="true"
-          style={{
-            position: 'absolute',
-            inset: 0,
-            overflow: 'hidden',
-            zIndex: 0,
-            pointerEvents: 'none',
-          }}
-        >
-          <svg
-            style={{
-              position: 'absolute',
-              inset: 0,
-              width: '200%',
-              height: '100%',
-            }}
-            xmlns="http://www.w3.org/2000/svg"
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <style>{`
-                @keyframes diagonalScroll {
-                  0%   { transform: translateX(0); }
-                  100% { transform: translateX(-50%); }
-                }
-                .diag-group {
-                  animation: diagonalScroll 18s linear infinite;
-                }
-              `}</style>
-            </defs>
+      <section id="contact" className="px-6 py-32 border-b border-border relative overflow-hidden">
+        {/* Subtle dot grid for depth */}
+        <div className="absolute inset-0 dc-hero-dots opacity-20 pointer-events-none" />
 
-            <g className="diag-group">
-              {Array.from({ length: 80 }).map((_, i) => (
-                <line
-                  key={i}
-                  x1={i * 40 - 200}
-                  y1="-100%"
-                  x2={i * 40 - 200 + 600}
-                  y2="200%"
-                  stroke={i % 20 === 5 || i % 20 === 15 ? "rgba(200,255,0,0.12)" : "rgba(255,255,255,0.08)"}
-                  strokeWidth="1.5"
-                />
-              ))}
-              {Array.from({ length: 80 }).map((_, i) => (
-                <line
-                  key={`b${i}`}
-                  x1={i * 40 - 200 + 1440}
-                  y1="-100%"
-                  x2={i * 40 - 200 + 1440 + 600}
-                  y2="200%"
-                  stroke={i % 20 === 5 || i % 20 === 15 ? "rgba(200,255,0,0.12)" : "rgba(255,255,255,0.08)"}
-                  strokeWidth="1.5"
-                />
-              ))}
-            </g>
-          </svg>
-        </div>
-        {/* Floating decorative + dots */}
-        {Array.from({ length: 8 }).map((_, i) => {
-          const isPlus = i % 2 === 0;
-          const size = isPlus ? 14 : 4;
-          const left = (i * 13 + 7) % 95;
-          const dur = 15 + (i * 1.3) % 10;
-          const delay = (i * 1.7) % 6;
-          return (
-            <span
-              key={i}
-              className="absolute pointer-events-none"
-              style={{
-                left: `${left}%`,
-                bottom: -40,
-                width: size,
-                height: size,
-                color: "rgba(200,255,0,0.12)",
-                fontSize: size,
-                lineHeight: 1,
-                background: isPlus ? "transparent" : "rgba(200,255,0,0.12)",
-                borderRadius: isPlus ? 0 : "50%",
-                animation: `float-up ${dur}s linear ${delay}s infinite`,
-              }}
-            >
-              {isPlus ? "+" : ""}
-            </span>
-          );
-        })}
-        <div className="mx-auto max-w-[1280px] relative">
-          <div
-            className="border border-border bg-background p-10 md:p-16 flex flex-col md:flex-row items-start md:items-end justify-between gap-8"
-            style={{ position: 'relative', zIndex: 1 }}
+        <div className="mx-auto max-w-[1280px] relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="relative w-full rounded-[2.5rem] bg-white/[0.02] border border-white/10 backdrop-blur-3xl overflow-hidden p-10 md:p-20 shadow-[0_0_100px_rgba(200,255,0,0.05)]"
           >
-            <div className="max-w-[640px]">
-              {/* <Typewriter text="↳ 008 / AUDIT" className="font-mono text-[11px] tracking-[0.18em] text-primary mb-4 min-h-[16px]" /> */}
-              <h2 className="dc-reveal font-display text-[clamp(2rem,4vw,3.5rem)] leading-[1.02] tracking-[-0.03em]">
-                Let's audit your stack —{" "}
-                <span className="italic font-serif font-normal">on the house.</span>
-              </h2>
+            {/* Swirling Mesh Gradient Background inside the card */}
+            <div className="absolute inset-0 opacity-20 pointer-events-none">
+              <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[150%] bg-primary/20 blur-[120px] rounded-full mix-blend-screen animate-pulse" style={{ animationDuration: '8s' }} />
+              <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[120%] bg-blue-500/20 blur-[120px] rounded-full mix-blend-screen animate-pulse" style={{ animationDuration: '10s' }} />
             </div>
-            <div className="flex flex-col gap-4 w-full md:w-auto md:items-end">
-              <a
-                href="mailto:Contact@dev-consultancy.com"
-                className="dc-cta-glow group inline-flex items-center justify-start gap-3 bg-primary text-background h-14 px-8 text-[15px] font-medium hover:opacity-90 transition-all shrink-0 w-full"
-              >
-                <Mail className="h-5 w-5" />
-                Contact@dev-consultancy.com
-              </a>
-              <a
-                href="tel:+919654722000"
-                className="dc-cta-glow group inline-flex items-center justify-start gap-3 bg-primary text-background h-14 px-8 text-[15px] font-medium hover:opacity-90 transition-all shrink-0 w-full"
-              >
-                <Phone className="h-5 w-5" />
-                +91 96547 22000
-              </a>
-              <a
-                href="https://api.whatsapp.com/send/?phone=919654722000&text=Hi+Dev+Consultancy%2C+I+want+a+free+consultation&type=phone_number&app_absent=0"
-                target="_blank" rel="noreferrer"
-                className="dc-cta-glow group inline-flex items-center justify-start gap-3 bg-primary text-background h-14 px-8 text-[15px] font-medium hover:opacity-90 transition-all shrink-0 w-full"
-              >
-                <WhatsappIcon className="h-5 w-5" />
-                Book Free Consultation
-              </a>
+            
+            <div className="relative z-10 flex flex-col xl:flex-row items-start xl:items-center justify-between gap-12">
+              
+              <div className="max-w-[600px]">
+                <span className="font-mono text-[13px] tracking-[0.2em] text-primary uppercase mb-6 block font-semibold">Initiate Audit Sequence</span>
+                <h2 className="font-display text-[clamp(2.5rem,5vw,4.5rem)] leading-[1.05] tracking-[-0.03em] text-white mb-6">
+                  Ready to <span className="italic font-serif font-normal text-primary">engineer</span> the chaos out of your systems?
+                </h2>
+                <p className="text-[18px] md:text-[20px] text-white/50">
+                  We'll review your architecture, identify bottlenecks, and map out a scalable path forward — on the house.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-4 w-full xl:w-[380px] shrink-0">
+                <a
+                  href="mailto:Contact@dev-consultancy.com"
+                  className="group relative flex items-center justify-between p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md overflow-hidden transition-all duration-300 hover:bg-white/[0.06] hover:border-primary/50"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  <div className="flex items-center gap-4 relative z-10">
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-colors duration-300">
+                      <Mail className="h-4 w-4" />
+                    </div>
+                    <span className="text-[15px] font-medium text-white">Email Us</span>
+                  </div>
+                  <svg className="w-5 h-5 text-white/30 group-hover:text-primary transition-colors group-hover:translate-x-1 duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
+
+                <a
+                  href="tel:+919654722000"
+                  className="group relative flex items-center justify-between p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md overflow-hidden transition-all duration-300 hover:bg-white/[0.06] hover:border-primary/50"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  <div className="flex items-center gap-4 relative z-10">
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-colors duration-300">
+                      <Phone className="h-4 w-4" />
+                    </div>
+                    <span className="text-[15px] font-medium text-white">+91 96547 22000</span>
+                  </div>
+                  <svg className="w-5 h-5 text-white/30 group-hover:text-primary transition-colors group-hover:translate-x-1 duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
+
+                <a
+                  href="https://api.whatsapp.com/send/?phone=919654722000&text=Hi+Dev+Consultancy%2C+I+want+a+free+consultation&type=phone_number&app_absent=0"
+                  target="_blank" rel="noreferrer"
+                  className="group relative flex items-center justify-between p-5 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md overflow-hidden transition-all duration-300 hover:bg-white/[0.06] hover:border-[#25D366]/50"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-[#25D366]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  <div className="flex items-center gap-4 relative z-10">
+                    <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-[#25D366] group-hover:text-white transition-colors duration-300">
+                      <WhatsappIcon className="h-4 w-4" />
+                    </div>
+                    <span className="text-[15px] font-medium text-white">WhatsApp</span>
+                  </div>
+                  <svg className="w-5 h-5 text-white/30 group-hover:text-[#25D366] transition-colors group-hover:translate-x-1 duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </a>
+              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
