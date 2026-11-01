@@ -179,6 +179,8 @@ const CLIENTS = [
   { name: "Medler", logo: "/medler.png", industry: "Technology" },
   { name: "Taru Yoga", logo: "/taruyoga1.jpeg", industry: "Wellness" },
   { name: "Vardhan", logo: "/vardhan.jpeg", industry: "Healthcare" },
+  { name: "Kyro Healthcare", logo: "/kyrohealthcare.jpeg", industry: "Healthcare" },
+  { name: "St. Margaret", logo: "/stmargret.png", industry: "Education" },
 ];
 
 const PROCESS = [
